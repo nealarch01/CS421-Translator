@@ -539,6 +539,8 @@ bool match(tokentype expected) {
 //                     sends a line of an IR to translated.txt
 //                     (saved_E_word or saved_token is used)
 
+// Converts the current_lexeme into its english word doing a map look up
+// If the english word does not exist, then the English word will be set to the saved_lexeme
 // Done by: Neal
 void getEWord() {
     saved_enWord = lexicon_dict[saved_lexeme]; // Note: map returns an empty string if the word was not found
@@ -547,6 +549,7 @@ void getEWord() {
     }
 }
 
+// Writes into translated.txt with the line type followed by the word in english (if line_type is not a verb/is/was)
 // Done by Neal
 void gen(string line_type) {
     if (line_type == "VERBPAST" || line_type == "VERBPASTNEG" || line_type == "VERB" || line_type == "VERBNEG" || line_type == "IS" || line_type == "WAS") {
