@@ -606,7 +606,7 @@ void noun() {
     }
 }
 
-// Grammar: <verb> ::= WORD2
+// Grammar: <verb> ::= WORD2 #getEWord()# #gen(ACTION)#
 // Done by: Neal
 void verb() {
     switch (next_token()) {
@@ -643,7 +643,7 @@ void be() {
     }
 }
 
-// Grammar: <tense> := VERBPAST  | VERBPASTNEG | VERB | VERBNEG
+// Grammar: <tense> := #getEWord() VERBPAST #gen(VERBPAST)#  | VERBPASTNEG #gen(VERBPASTNEG)# | VERB #gen(VERB)# | VERBNEG #gen(VERBNEG)#
 // Done by: Gabriel
 void tense() {
     switch (next_token()) {
@@ -677,7 +677,8 @@ void tense() {
 }
 
 /**
- * utility function for <verb><tense>PERIOD phrase
+ * utility function for <verb> #getEWord()# #gen(Action)# <tense>PERIOD phrase
+ * gen(ACTION) is generated in non-terminal <verb>
  * Done by: Gabriel
  */
 void verbTensePeriod() {
@@ -730,7 +731,7 @@ verb, be, and tense <s> ::= [CONNECTOR]<noun> SUBJECT <afterSubject>
                        |<verb><tense>PERIOD
 */
 
-// Grammar: <afterObject>::= <noun> DESTINATION <verb><tense>PERIOD |
+// Grammar: <afterObject>::= <noun> #getEWord()# #gen(TO)# DESTINATION <verb><tense>PERIOD |
 //<verb><tense>PERIOD
 // Done by: Gabriel
 void afterObject() {
@@ -770,8 +771,8 @@ void afterObject() {
            //  cout << "\nexiting afterObject()\n\n";
 }
 
-// Grammar: <afterNoun>::= <be>PERIOD | DESTINATION <verb><tense>PERIOD |
-//			  		          | OBJECT <afterObject>
+// Grammar: <afterNoun>::= <be> #gen(DESCRIPTION)# | DESTINATION <verb><tense>PERIOD #gen(TO)# |
+//			  		          | OBJECT #gen(OBJECT) <afterObject> 
 // Done by: Gabriel
 void afterNoun() {
     // cout << "processing <afterNoun>\n";
@@ -819,7 +820,8 @@ void afterNoun() {
        // cout << "\nexiting afterNoun()\n\n";
 }
 
-// Grammar: <afterSubject>::= <verb><tense>PERIOD | <noun> <afterNoun>
+// Grammar: <afterSubject>::= <verb> #getEWord()# #gen(ACTION) <tense>PERIOD | <noun> #getEWord# <afterNoun>
+// Note: #getEWord()# #gen(ACTION)# will be called after processing verbTensePeriod() -> verb()
 // Done by: Gabriel
 void afterSubject() {
     // cout << "processing <afterSubject>\n";
@@ -842,6 +844,7 @@ void afterSubject() {
 
                 //<verb><tense>PERIOD cases
             case WORD2:  // all <verb> non-terms should go to word2
+                getEWord();
                 verbTensePeriod();
                 isValid = true;
                 break;
@@ -860,7 +863,7 @@ void afterSubject() {
    <tense> PERIOD | [CONNECTOR] <noun> SUBJECT  <noun>  OBJECT   <verb> <tense>
    PERIOD | [CONNECTOR] <noun> SUBJECT  <noun>  OBJECT   <noun> DESTINATION
 */
-// Grammar: <s> ::= [CONNECTOR]<noun> SUBJECT <afterSubject>
+// Grammar: <s> ::= [CONNECTOR]<noun> #getEWord# #gen(ACTOR)# SUBJECT <afterSubject>
 // Done by: Gabriel, Neal
 void s() {
     // cout << "processing <s>\n";
