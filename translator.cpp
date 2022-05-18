@@ -774,7 +774,7 @@ void afterObject() {
            //  cout << "\nexiting afterObject()\n\n";
 }
 
-// Grammar: <afterNoun>::= <be> #gen(DESCRIPTION)# | DESTINATION <verb><tense>PERIOD #gen(TO)# |
+// Grammar: <afterNoun>::= <be> #gen(DESCRIPTION)# #gen(TENSE)# PERIOD | DESTINATION #gen(TO)# <verb><tense>PERIOD |
 //			  		          | OBJECT #gen(OBJECT) <afterObject> 
 // Done by: Gabriel
 void afterNoun() {
@@ -860,7 +860,7 @@ void afterSubject() {
            // cout << "\nexiting afterSubject()\n\n";
 }
 
-/* Grammar: <s> ::= [CONNECTOR] <noun> SUBJECT  <verb>   <tense> PERIOD
+/* Grammar: <s> ::= [CONNECTOR #getEWord()# #gen(CONNECTOR)] <noun> SUBJECT  <verb>   <tense> PERIOD
                       | [CONNECTOR] <noun> SUBJECT  <noun>  <be>      PERIOD
                       | [CONNECTOR] <noun> SUBJECT  <noun>  DESTINATION  <verb>
    <tense> PERIOD | [CONNECTOR] <noun> SUBJECT  <noun>  OBJECT   <verb> <tense>
