@@ -514,7 +514,7 @@ void syntaxerror2(string& saved_lexeme, string nonterm) {
 tokentype next_token() {
     if (!token_available) {
         scanner(saved_token, saved_lexeme);
-        // cout << "Scanner called using word: " << saved_lexeme << endl;
+        cout << "Scanner called using word: " << saved_lexeme << endl;
         token_available = true;
     }
     return saved_token;
@@ -593,15 +593,15 @@ verb, be, and tense <s> ::= [CONNECTOR]<noun> SUBJECT <afterSubject>
 // Grammar: <noun> ::= WORD1 | PRONOUN
 // Done by: Neal
 void noun() {
-    // cout << "processing <noun>\n";
+    cout << "processing <noun>\n";
     switch (next_token()) {
         case WORD1:
             match(WORD1);
-            // cout << "matched WORD1\n";
+            cout << "matched WORD1\n";
             break;
         case PRONOUN:
             match(PRONOUN);
-            // cout << "matched PRONOUN\n";
+            cout << "matched PRONOUN\n";
             break;
         default:
             syntaxerror2(saved_lexeme, "noun");
@@ -617,7 +617,7 @@ void verb() {
             match(WORD2);
             getEWord();
             gen("ACTION");
-            // cout << "matched WORD2\n";
+            cout << "matched WORD2\n";
             break;
         default:
             syntaxerror2(saved_lexeme, "verb");
@@ -627,11 +627,11 @@ void verb() {
 // Grammar: <be> ::=   IS | WAS
 // Done by: Gabriel
 void be() {
-    // cout << "processing <be>\n";
+    cout << "processing <be>\n";
     switch (next_token()) {
         case IS:
             match(IS);
-            // cout << "matched IS\n";
+            cout << "matched IS\n";
             getEWord();
             gen("IS");
             break;
@@ -639,7 +639,7 @@ void be() {
             match(WAS);
             getEWord();
             gen("WAS");
-            // cout << "matched WAS\n";
+            cout << "matched WAS\n";
             break;
         default:
             syntaxerror2(saved_lexeme, "be");
@@ -654,25 +654,25 @@ void tense() {
             match(VERBPAST);
             getEWord();
             gen("VERBPAST");
-            // cout << "matched VERBPAST\n";
+            cout << "matched VERBPAST\n";
             break;
         case VERBPASTNEG:
             match(VERBPASTNEG);
             getEWord();
             gen("VERBPASTNEG");
-            // cout << "matched VERBPASTNEG\n";
+            cout << "matched VERBPASTNEG\n";
             break;
         case VERB:
             match(VERB);
             getEWord();
             gen("VERB");
-            // cout << "matched VERB\n";
+            cout << "matched VERB\n";
             break;
         case VERBNEG:
             match(VERBNEG);
             getEWord();
             gen("VERBNEG");
-            // cout << "matched VERBNEG\n";
+            cout << "matched VERBNEG\n";
             break;
         default:
             syntaxerror2(saved_lexeme, "tense");
@@ -689,9 +689,9 @@ void verbTensePeriod() {
     bool hasPeriod = false;
     while (!hasPeriod) {
         if (isVerb == 0) {
-            // cout << "processing <verb>\n";
+            cout << "processing <verb>\n";
         } else if (isVerb == 1) {
-            // cout << "processing <tense>\n";
+            cout << "processing <tense>\n";
         }
         switch (next_token()) {
             case WORD2:  // all <verb> non-terms should go to word2
@@ -713,7 +713,7 @@ void verbTensePeriod() {
 
             case PERIOD:
                 match(PERIOD);
-                // cout << "matched PERIOD\n";
+                cout << "matched PERIOD\n";
                 hasPeriod = true;
                 break;
 
@@ -738,7 +738,7 @@ verb, be, and tense <s> ::= [CONNECTOR]<noun> SUBJECT <afterSubject>
 //<verb><tense>PERIOD
 // Done by: Gabriel
 void afterObject() {
-    // cout << "processing <afterObject>\n";
+    cout << "processing <afterObject>\n";
     bool isValid = false;
 
     while (!isValid) {
@@ -778,7 +778,7 @@ void afterObject() {
 //			  		          | OBJECT #gen(OBJECT) <afterObject> 
 // Done by: Gabriel
 void afterNoun() {
-    // cout << "processing <afterNoun>\n";
+    cout << "processing <afterNoun>\n";
     bool isValid = false;
     while (!isValid) {
         switch (next_token()) {
@@ -793,14 +793,14 @@ void afterNoun() {
                 break;
             case PERIOD:
                 match(PERIOD);
-                // cout << "matched PERIOD\n";
+                cout << "matched PERIOD\n";
                 isValid = true;
                 break;
 
             // DESTINATION <verb><tense>PERIOD case
             case DESTINATION:
                 match(DESTINATION);
-                // cout << "matched DESTINATION\n";
+                cout << "matched DESTINATION\n";
                 gen("TO");
                 verbTensePeriod();
                 isValid = true;
@@ -809,7 +809,7 @@ void afterNoun() {
             // OBJECT <afterObject> case
             case OBJECT:
                 match(OBJECT);
-                // cout << "matched OBJECT\n";
+                cout << "matched OBJECT\n";
                 gen("OBJECT");
                 afterObject();
                 isValid = true;
@@ -827,7 +827,7 @@ void afterNoun() {
 // Note: #getEWord()# #gen(ACTION)# will be called after processing verbTensePeriod() -> verb()
 // Done by: Gabriel
 void afterSubject() {
-    // cout << "processing <afterSubject>\n";
+    cout << "processing <afterSubject>\n";
     bool isValid = false;
     while (!isValid) {
         switch (next_token()) {
@@ -869,33 +869,32 @@ void afterSubject() {
 // Grammar: <s> ::= [CONNECTOR]<noun> #getEWord# #gen(ACTOR)# SUBJECT <afterSubject>
 // Done by: Gabriel, Neal
 void s() {
-    // cout << "processing <s>\n";
+    cout << "processing <s>\n";
     if (next_token() == CONNECTOR) {
         match(CONNECTOR);
         getEWord();
         gen("CONNECTOR");
-        // cout << "matched CONNECTOR\n";
+        cout << "matched CONNECTOR\n";
     }
     noun();  // unconditionally process noun
     getEWord();
     next_token();
     gen("ACTOR");
     match(SUBJECT);
-    // cout << "matched SUBJECT\n";
+    cout << "matched SUBJECT\n";
     afterSubject();
 }
 
 // Grammar: <story> ::= <s> { <s> }
 // Done by: Neal
 void story() {
-    // cout << "Group #17: Neal, Damien, Gabriel\n\n";
     // Since this is the entry point, do an infinite loop to keep parsing until
     // over
-    // cout << "Processing <story>\n\n";
+    cout << "Processing <story>\n\n";
     s();  // Grammar says process one <s> first
     while (1) {
         if (next_token() == EOFM) {
-            // cout << "\nSuccessfully parsed <story>\n";
+            cout << "\nSuccessfully parsed <story>\n";
             return;
         }
         s();  // repeatable when in curly braces
@@ -928,7 +927,7 @@ void story() {
 // The final test driver to start the translator
 // Done by:  Neal
 int main() {
-    
+    cout << "Group #17: Neal, Damien, Gabriel\n\n";
     ifstream lfin; // file stream for lexicon.txt
     lfin.open("lexicon.txt"); //** opens the lexicon.txt file and reads it into Lexicon
 
